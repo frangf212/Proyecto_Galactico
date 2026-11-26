@@ -2,17 +2,9 @@ from django.db import transaction
 from django.test import TestCase
 from faker import Faker
 
-from .models import CaraterísticasUsuarios, Exoplanetas, Misiones, Nave, Usuario
+from .models import CaraterísticasUsuarios, Exoplanetas, Misiones, Nave, Usuaiport
 
-
-CARACTERISTICAS = [
-    "Misiones largas",
-    "Explorador de cortas distancias",
-    "Conflictivo",
-    "Cocinero",
-    "Mantenimiento",
-]
-
+from .constantes import CARACTERISTICAS
 
 def crear_usuarios(cantidad, tipo, fake):
     usuarios = []
