@@ -1,14 +1,17 @@
 from django.contrib import admin
-from .models import Usuario
-from .models import Nave
-from .models import CaraterísticasUsuarios
-from .models import Exoplanetas
-from .models import Misiones
+from .models import (
+    CaracteristicaUsuario,
+    Exoplaneta,
+    Mision,
+    Nave,
+    Participacion,
+    Usuario,
+)
 
-
-# Register your models here.
 admin.site.register(Usuario)
+admin.site.register(CaracteristicaUsuario)
 admin.site.register(Nave)
-admin.site.register(CaraterísticasUsuarios)
-admin.site.register(Exoplanetas)
-admin.site.register(Misiones)
+admin.site.register(Mision)
+admin.site.register(Participacion)
+admin.site.register(Exoplaneta)
+

@@ -7,7 +7,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/usuarios/", views.devolverusuarios, name="usuarios"),
     path("api/usuario/<int:id>/", views.devolverusuarioid, name="usuario_id"),
-    path("api/usuarios/crear/", views.crearusuario, name="crear_usuario"),
+    path("api/usuarios/crear/", views.crearusuario, name="crearusuario"),
     path("api/usuarios/<int:id>/actualizar/", views.actualizarusuario, name="actualizar_usuario"),
     path("api/usuarios/<int:id>/parcial/", views.actualizardato, name="actualizar_dato"),
     path("api/usuarios/<int:id>/eliminar/", views.borrarusuario, name="borrar_usuario"),

@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="846c170c-f671-4210-8f51-12d9477955bc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/introduccion/galacticodb/constantes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/introduccion/galacticodb/testFactoria.py" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/galacticodb/testFactoria.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/introduccion/galacticodb/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/galacticodb/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/introduccion/scrum/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/scrum/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/introduccion/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/introduccion/galacticodb/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/galacticodb/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/introduccion/galacticodb/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/introduccion/galacticodb/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
