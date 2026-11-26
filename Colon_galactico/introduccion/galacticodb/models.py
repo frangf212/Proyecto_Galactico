@@ -1,51 +1,60 @@
 from django.db import models
 
-# Create your models here.
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
-    tipo = models.CharField( max_length=50)
 
     def __str__(self):
         return self.nombre
 
 
-
-
-class CaraterísticasUsuarios(models.Model):
+class CaracteristicaUsuario(models.Model):
     caracteristica = models.CharField(max_length=100)
-
-    user= models.ForeignKey(Usuario,
-        on_delete=models.PROTECT,
-        related_name="usuarios")
-    def __str__(self):
-        return self.user.nombre
-
-class Nave(models.Model):
-    tamanio = models.CharField(max_length=100)
-    capacidad = models.IntegerField()
-
-    def __str__(self):
-        return self.tamanio
-
-
-
-class Misiones(models.Model):
-    descripcion = models.CharField(max_length=100)
-    estado = models.BooleanField(default=False)
-
-    nave= models.ForeignKey(Nave,
-    on_delete=models.PROTECT,
-    related_name="naves"
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name="caracteristicas"
     )
 
     def __str__(self):
-        return self.nave.tamanio
+        return f"{self.usuario} - {self.caracteristica}"
 
 
+class Nave(models.Model):
+    tamanio = models.CharField(max_length=20)
+    capacidad = models.IntegerField()  # solo tripulantes
 
-class Exoplanetas(models.Model):
+    def __str__(self):
+        return f"{self.tamanio} #{self.pk}"
+
+
+class Mision(models.Model):
+    descripcion = models.CharField(max_length=100)
+    estado = models.CharField(max_length=20, default="en_curso")  # en_curso, exito, fracaso
+    fecha_inicio = models.DateTimeField(auto_now_add=True)
+    fecha_fin = models.DateTimeField(null=True, blank=True)
+    nave = models.ForeignKey(Nave, on_delete=models.PROTECT, related_name="misiones")
+
+    def __str__(self):
+        return f"{self.descripcion} ({self.estado})"
+
+
+class Participacion(models.Model):
+    rol = models.CharField(max_length=20)  # capitan, tripulante
+    mision = models.ForeignKey(
+        Mision, on_delete=models.CASCADE, related_name="participaciones"
+    )
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.PROTECT, related_name="participaciones"
+    )
+
+    def __str__(self):
+        return f"{self.usuario} - {self.rol} - {self.mision}"
+
+
+class Exoplaneta(models.Model):
     nombre = models.CharField(max_length=100)
+    mision = models.ForeignKey(
+        Mision, on_delete=models.CASCADE, related_name="exoplanetas"
+    )
 
     def __str__(self):
         return self.nombre
