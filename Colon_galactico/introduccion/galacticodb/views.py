@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Exoplaneta, Mision, Nave, Participacion, Usuario
-from .models import Participacion, Usuario, Mision
+
 
 
 
@@ -200,6 +200,11 @@ def borrarusuario(request, id):
 @csrf_exempt
 def asignarmision(request):
     if request.method != "POST":
+        return JsonResponse(
+            {"error": "Operación no permitida"},
+            status=405
+        )
+
     try:
         datos = json.loads(request.body)
     except (JSONDecodeError, UnicodeDecodeError):
@@ -357,6 +362,13 @@ def finalizarmision(request, id):
             status=400
         )
 
+    mision = Mision.objects.filter(id=id).first()
+
+    if mision is None:
+        return JsonResponse(
+            {"error": "Misión no encontrada"},
+            status=404
+        )
 
     if mision.estado != "en_curso":
         return JsonResponse(
@@ -435,3 +447,35 @@ def listartripulantesenmision(request, id):
         "tripulacion": tripulacion
     })
 
+def listarexoplanetascapitan(request, id):
+    if request.method != "GET":
+        return JsonResponse(
+            {"error": "Operación no permitida"},
+            status=405
+        )
+
+    usuario = Usuario.objects.filter(id=id).first()
+    if usuario is None:
+        return JsonResponse(
+            {"error": "Usuario no encontrado"},
+            status=404
+        )
+
+    if not Participacion.objects.filter(usuario=usuario, rol="capitan").exists():
+        return JsonResponse(
+            {"error": "El usuario no ha sido capitán en ninguna misión"},
+            status=400
+        )
+
+    misiones = list(
+        Participacion.objects.filter(usuario=usuario, rol="capitan")
+        .values_list("mision_id", flat=True)
+    )
+
+    exoplanetas = Exoplaneta.objects.filter(mision_id__in=misiones)
+
+    return JsonResponse({
+        "capitan_id": usuario.id,
+        "capitan": usuario.nombre,
+        "exoplanetas": list(exoplanetas.values())
+    })

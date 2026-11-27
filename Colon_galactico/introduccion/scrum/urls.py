@@ -14,5 +14,6 @@ urlpatterns = [
     path("api/misiones/asignar/", views.asignarmision, name="asignar_mision"),
     path("api/misiones/<int:id>/finalizar/", views.finalizarmision, name="finalizar_mision"),
     path("api/misiones/<int:id>/tripulantes/", views.listartripulantesenmision, name="tripulantes_mision"),
+    path("api/capitanes/<int:id>/exoplanetas/", views.listarexoplanetascapitan, name="exoplanetas_capitan"),
 
 ]
