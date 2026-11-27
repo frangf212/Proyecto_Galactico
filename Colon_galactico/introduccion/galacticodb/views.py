@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Exoplaneta, Mision, Nave, Participacion, Usuario
+from .models import Participacion, Usuario, Mision
+
 
 
 def devolverusuarios(request):
@@ -194,14 +196,10 @@ def borrarusuario(request, id):
     return HttpResponse(status=204)
 
 
+
 @csrf_exempt
 def asignarmision(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"error": "Operación no permitida"},
-            status=405
-        )
-
     try:
         datos = json.loads(request.body)
     except (JSONDecodeError, UnicodeDecodeError):
@@ -359,12 +357,7 @@ def finalizarmision(request, id):
             status=400
         )
 
-    mision = Mision.objects.filter(id=id).first()
-    if mision is None:
-        return JsonResponse(
-            {"error": "Misión no encontrada"},
-            status=404
-        )
+
     if mision.estado != "en_curso":
         return JsonResponse(
             {"error": "Solo se pueden finalizar misiones en curso"},
@@ -409,3 +402,36 @@ def finalizarmision(request, id):
             "estado": mision.estado
         }
     )
+
+
+
+def listartripulantesenmision(request, id):
+    if request.method != "GET":
+
+        return JsonResponse(
+            {"error": "Operación no permitida"},
+            status=405
+        )
+    mision = Mision.objects.filter(id=id).first()
+    if mision is None:
+        return JsonResponse(
+            {"error": "Misión no encontrada"},
+            status=404
+        )
+
+    tripulacion = []
+    for participacion in Participacion.objects.filter(mision=mision).order_by("rol"):
+        tripulacion.append({
+            "usuario_id": participacion.usuario.id,
+            "nombre": participacion.usuario.nombre,
+            "rol": participacion.rol
+        })
+
+    return JsonResponse({
+        "mision_id": mision.id,
+        "descripcion": mision.descripcion,
+        "estado": mision.estado,
+        "nave": mision.nave.tamanio,
+        "tripulacion": tripulacion
+    })
+
