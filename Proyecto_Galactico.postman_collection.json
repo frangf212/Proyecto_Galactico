@@ -1,0 +1,80 @@
+{
+  "info": {
+    "_postman_id": "8cbb8c82-2f4d-4c8f-aef2-7f6a4c73a8a1",
+    "name": "Proyecto Galactico - API",
+    "description": "Colección para comprobar los endpoints implementados en galacticodb. Antes de ejecutar, inicia Django y configura las variables naveId, userId, captainIds y crewIds con identificadores existentes. Ejecutar en el orden de las carpetas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://127.0.0.1:8000"},
+    {"key": "userId", "value": "1"},
+    {"key": "naveId", "value": "1"},
+    {"key": "captainIds", "value": "[1]"},
+    {"key": "crewIds", "value": "[2,3,4,5]"},
+    {"key": "captainId", "value": "1"},
+    {"key": "createdUserId", "value": ""},
+    {"key": "missionId", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "1 - Usuarios",
+      "item": [
+        {
+          "name": "GET - Listar usuarios",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/usuarios/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Respuesta HTTP 200', function () { pm.response.to.have.status(200); });", "pm.test('La respuesta es una lista JSON', function () { pm.expect(pm.response.json()).to.be.an('array'); });"]}}]
+        },
+        {
+          "name": "GET - Consultar usuario por ID (variable userId)",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/usuario/{{userId}}/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Respuesta HTTP 200', function () { pm.response.to.have.status(200); });", "pm.test('El usuario contiene nombre e id', function () { const body = pm.response.json(); pm.expect(body).to.have.property('nombre'); pm.expect(body).to.have.property('id'); });"]}}]
+        },
+        {
+          "name": "POST - Crear usuario de prueba",
+          "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"nombre\": \"Usuario creado desde Postman\"\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/api/usuarios/crear/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Usuario creado: HTTP 201', function () { pm.response.to.have.status(201); });", "const body = pm.response.json();", "pm.expect(body.id).to.exist;", "pm.collectionVariables.set('createdUserId', body.id);"]}}]
+        },
+        {
+          "name": "PUT - Actualizar usuario (variable userId)",
+          "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"nombre\": \"Usuario actualizado mediante PUT\"\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/api/usuarios/{{userId}}/actualizar/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Actualización PUT correcta', function () { pm.response.to.have.status(200); });"]}}]
+        },
+        {
+          "name": "PATCH - Actualizar parcialmente usuario (variable userId)",
+          "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"nombre\": \"Usuario actualizado mediante PATCH\"\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/api/usuarios/{{userId}}/parcial/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Actualización PATCH correcta', function () { pm.response.to.have.status(200); });", "pm.test('Devuelve el nuevo nombre', function () { pm.expect(pm.response.json().nombre).to.eql('Usuario actualizado mediante PATCH'); });"]}}]
+        },
+        {
+          "name": "DELETE - Borrar usuario creado por esta colección",
+          "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/api/usuarios/{{createdUserId}}/eliminar/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Usuario eliminado: HTTP 204', function () { pm.response.to.have.status(204); });"]}}]
+        }
+      ]
+    },
+    {
+      "name": "2 - Misiones y tripulaciones",
+      "item": [
+        {
+          "name": "POST - Asignar misión",
+          "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"descripcion\": \"Misión de prueba desde Postman\",\n    \"nave_id\": {{naveId}},\n    \"capitanes\": {{captainIds}},\n    \"tripulantes\": {{crewIds}}\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/api/misiones/asignar/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Misión creada: HTTP 201', function () { pm.response.to.have.status(201); });", "const body = pm.response.json();", "pm.expect(body.id).to.exist;", "pm.collectionVariables.set('missionId', body.id);", "const ids = JSON.parse(pm.collectionVariables.get('captainIds') || '[1]');", "pm.collectionVariables.set('captainId', ids[0]);"]}}]
+        },
+        {
+          "name": "GET - Listar tripulantes de la misión creada",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/misiones/{{missionId}}/tripulantes/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Consulta de tripulación: HTTP 200', function () { pm.response.to.have.status(200); });", "pm.test('La respuesta contiene la tripulación', function () { pm.expect(pm.response.json().tripulacion).to.be.an('array'); });"]}}]
+        },
+        {
+          "name": "POST - Finalizar misión con éxito y registrar exoplanetas",
+          "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n    \"estado\": \"exito\",\n    \"exoplanetas\": [\n        \"Kepler-22b\",\n        \"Proxima-b\"\n    ]\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/api/misiones/{{missionId}}/finalizar/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Misión finalizada: HTTP 200', function () { pm.response.to.have.status(200); });", "pm.test('El estado final es exito', function () { pm.expect(pm.response.json().estado).to.eql('exito'); });"]}}]
+        },
+        {
+          "name": "GET - Consultar exoplanetas de un capitán",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/capitanes/{{captainId}}/exoplanetas/"},
+          "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Consulta de exoplanetas: HTTP 200', function () { pm.response.to.have.status(200); });", "pm.test('Devuelve el capitán y una lista de exoplanetas', function () { const body = pm.response.json(); pm.expect(body).to.have.property('capitan'); pm.expect(body.exoplanetas).to.be.an('array'); });"]}}]
+        }
+      ]
+    }
+  ]
+}

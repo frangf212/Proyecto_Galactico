@@ -1,0 +1,59 @@
+
+### 1. Listar usuarios
+GET http://127.0.0.1:8000/api/usuarios/
+
+### 2. Consultar usuario por ID
+GET http://127.0.0.1:8000/api/usuario/1/
+
+### 3. Crear usuario
+POST http://127.0.0.1:8000/api/usuarios/crear/
+Content-Type: application/json
+
+{
+    "nombre": "Francisco"
+}
+
+### 4. Actualizar usuario
+PUT http://127.0.0.1:8000/api/usuarios/1/actualizar/
+Content-Type: application/json
+
+{
+    "nombre": "Francisco Actualizado"
+}
+
+### 5. Actualizar un dato
+PATCH http://127.0.0.1:8000/api/usuarios/1/parcial/
+Content-Type: application/json
+
+{
+    "nombre": "Francisco Modificado"
+}
+
+### 6. Eliminar usuario
+DELETE http://127.0.0.1:8000/api/usuarios/1/eliminar/
+
+### 7. Asignar misión
+POST http://127.0.0.1:8000/api/misiones/asignar/
+Content-Type: application/json
+
+{
+    "descripcion": "Exploración de Marte",
+    "nave_id": 1,
+    "capitanes": [1],
+    "tripulantes": [2, 3, 4, 5]
+}
+
+### 8. Finalizar misión
+POST http://127.0.0.1:8000/api/misiones/1/finalizar/
+Content-Type: application/json
+
+{
+    "estado": "exito",
+    "exoplanetas": ["Kepler-22b", "Proxima-b"]
+}
+
+### 9. Consultar tripulantes
+GET http://127.0.0.1:8000/api/misiones/1/tripulantes/
+
+### 10. Consultar exoplanetas del capitán
+GET http://127.0.0.1:8000/api/capitanes/1/exoplanetas/
