@@ -4,7 +4,7 @@ from json import JSONDecodeError
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Participacion, Usuario
+from .models import Participacion, Usuario, Mision
 
 
 def devolverusuarios(request):
@@ -191,3 +191,33 @@ def borrarusuario(request, id):
 
     usuario.delete()
     return HttpResponse(status=204)
+
+def listartripulantesenmision(request, id):
+    if request.method != "GET":
+        return JsonResponse(
+            {"error": "Operación no permitida"},
+            status=405
+        )
+
+    mision = Mision.objects.filter(id=id).first()
+    if mision is None:
+        return JsonResponse(
+            {"error": "Misión no encontrada"},
+            status=404
+        )
+
+    tripulacion = []
+    for participacion in Participacion.objects.filter(mision=mision).order_by("rol"):
+        tripulacion.append({
+            "usuario_id": participacion.usuario.id,
+            "nombre": participacion.usuario.nombre,
+            "rol": participacion.rol
+        })
+
+    return JsonResponse({
+        "mision_id": mision.id,
+        "descripcion": mision.descripcion,
+        "estado": mision.estado,
+        "nave": mision.nave.tamanio,
+        "tripulacion": tripulacion
+    })
