@@ -2,7 +2,7 @@ from django.db import transaction
 from django.test import TestCase
 from faker import Faker
 
-from .models import CaraterísticasUsuarios, Exoplanetas, Misiones, Nave, Usuaiport
+from .models import CaracteristicaUsuario,Usuario,Nave,Mision,Exoplaneta
 
 from .constantes import CARACTERISTICAS
 
@@ -13,7 +13,7 @@ def crear_usuarios(cantidad, tipo, fake):
         usuario = Usuario(nombre=fake.name(), tipo=tipo)
         usuario.save()
 
-        caracteristica = CaraterísticasUsuarios(
+        caracteristica = CaracteristicaUsuario(
             user=usuario,
             caracteristica=fake.random_element(CARACTERISTICAS),
         )
@@ -69,7 +69,7 @@ def crear_misiones_y_exoplanetas():
     exoplanetas = []
 
     for numero_mision in range(1, 21):
-        mision = Misiones(
+        mision = Mision(
             descripcion=f"Expedición espacial {numero_mision}",
             nave=fake.random_element(naves),
         )
@@ -77,7 +77,7 @@ def crear_misiones_y_exoplanetas():
         misiones.append(mision)
 
     for numero_planeta in range(1, 31):
-        planeta = Exoplanetas(nombre=f"{fake.first_name()}-{numero_planeta}")
+        planeta = Exoplaneta(nombre=f"{fake.first_name()}-{numero_planeta}")
         planeta.save()
         exoplanetas.append(planeta)
 
@@ -90,7 +90,7 @@ class CrearFlotaTests(TestCase):
 
         self.assertEqual(len(flota), 30)
         self.assertEqual(Nave.objects.count(), 30)
-        self.assertEqual(Usuario.objects.count(), CaraterísticasUsuarios.objects.count())
+        self.assertEqual(Usuario.objects.count(), CaracteristicaUsuario.objects.count())
 
         for tamanio in ["Pequeña", "Mediana", "Grande"]:
             self.assertEqual(Nave.objects.filter(tamanio=tamanio).count(), 10)
@@ -133,8 +133,8 @@ class CrearFlotaTests(TestCase):
 
         self.assertEqual(len(misiones), 20)
         self.assertEqual(len(exoplanetas), 30)
-        self.assertEqual(Misiones.objects.count(), 20)
-        self.assertEqual(Exoplanetas.objects.count(), 30)
+        self.assertEqual(Mision.objects.count(), 20)
+        self.assertEqual(Exoplaneta.objects.count(), 30)
         for mision in misiones:
             self.assertEqual(mision.nave, nave)
             self.assertTrue(mision.descripcion)
@@ -145,5 +145,5 @@ class CrearFlotaTests(TestCase):
         with self.assertRaisesMessage(ValueError, "Es necesario crear naves"):
             crear_misiones_y_exoplanetas()
 
-        self.assertEqual(Misiones.objects.count(), 0)
-        self.assertEqual(Exoplanetas.objects.count(), 0)
+        self.assertEqual(Mision.objects.count(), 0)
+        self.assertEqual(Exoplaneta.objects.count(), 0)
