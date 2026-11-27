@@ -58,7 +58,7 @@ def crear_flota():
     return flota
 
 
-@transaction.atomic
+
 def crear_misiones_y_exoplanetas():
     naves = list(Nave.objects.all())
     if not naves:
